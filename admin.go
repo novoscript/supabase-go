@@ -121,6 +121,20 @@ func (a *Admin) GetUser(ctx context.Context, userID string) (*AdminUser, error) 
 	return &res, nil
 }
 
+ Delete a user
+func (a *Admin) Remove(ctx context.Context, userID string) (err error) {
+	reqURL := fmt.Sprintf("%s/%s/users/%s", a.client.BaseURL, AdminEndpoint, userID)
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, reqURL, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", a.serviceKey))
+	if err := a.client.sendRequest(req, nil); err != nil {
+		return err
+	}
+	return
+}
+
 // Create a user
 func (a *Admin) CreateUser(ctx context.Context, params AdminUserParams) (*AdminUser, error) {
 	reqBody, _ := json.Marshal(params)
